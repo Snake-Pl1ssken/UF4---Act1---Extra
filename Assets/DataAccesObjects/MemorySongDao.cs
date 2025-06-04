@@ -10,7 +10,7 @@ public class MemorySongDao : SongStatsDao
 
     Dictionary<string, Song> storedSongs;
 
-    private void Start()
+    public MemorySongDao()
     {
         storedSongs = new Dictionary<string, Song>();
     }

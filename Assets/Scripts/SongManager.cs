@@ -15,10 +15,11 @@ public class SongManager : MonoBehaviour
 
     public StorageType storagetype;
     SongStatsDao songstatsDao;
+    Song song;
 
     string id;
 
-    void start()
+    void Start()
     {
         switch (storagetype)
         { 
@@ -31,86 +32,54 @@ public class SongManager : MonoBehaviour
         }
     }
 
-    Song song;
-
-    Dictionary<string, Song> storedSongs;
-
-    private void Start()
-    {
-        storedSongs = new Dictionary<string, Song>();
-    }
-
     public void NewSong()
     {
-        Guid guid = Guid.NewGuid();
-
-        song = new Song();
-        song.id = guid.ToString();
-        song.title = "";
-        song.author = "";
-        song.events = new List<SongEvent>();
-
+        songstatsDao.NewSong();
     }
 
     public void SetSongInfo(string _title, string _author)
     {
-        song.title = _title;
-        song.author = _author;
+        songstatsDao.SetSongInfo(_title, _author);
     }
 
     public void AddSongEvent(float _time, int _data)
     {
-        SongEvent e = new SongEvent();
-
-        e.time = _time;
-        e.data = _data;
-
-        song.events.Add(e);
+        songstatsDao.AddSongEvent(_time, _data);
     }
 
     public void SaveSong()
     {
-        storedSongs.Add(song.id, song);
+        songstatsDao.SaveSong();
     }
 
     public void LoadSong(string id)
     {
-        song = storedSongs[id];
+        songstatsDao.LoadSong(id);
     }
 
     public void DeleteSong(string id)
     {
-        storedSongs.Remove(id);
+        songstatsDao.DeleteSong(id);
     }
 
     public void GetSongInfo(out string _title, out string _author)
     {
-        _title = song.title;
-        _author = song.author;
+        songstatsDao.GetSongInfo(out _title, out _author);
     }
 
     
     public List<SongEvent> GetSongEvents()
     {
-        return song.events;
+        return songstatsDao.GetSongEvents();
     }
 
     public void GetSongInfo(string id, out string _title, out string _author)
     {
-        _title = storedSongs[id].title;
-        _author = storedSongs[id].author;
+        songstatsDao.GetSongInfo(id, out _title, out _author);
     }
 
     public List<string> GetSongIds()
     {
-        string[] idArray = new string[storedSongs.Keys.Count];
-        storedSongs.Keys.CopyTo(idArray, 0);
-        List<string> idList = new List<string>();
-        idList.AddRange(idArray);
-        
-        return idList;
+        return songstatsDao.GetSongIds();
     }
-
-
-
 }
