@@ -7,22 +7,34 @@ using System;
 
 public class MySQLSongDao : SongStatsDao
 {
+    //Se trata de un caso de 2 tablas la tabla songEvents va a la tabla song 
+    //el indice empieza en 0 y cada que se recibe un evento se a de sumar en 1 el indice una
+    //vez recibidios todos los eventos y pasados todos los indices correspondientes al evento es que se a 
+    //de poner el indice otra vez a 0 para esperar el proximo evento
     // Datos de conexión
-    [SerializeField] string server = "127.0.0.1";
-    [SerializeField] string database = "racer";
-    [SerializeField] string user = "root";
-    [SerializeField] string password = "";
-    [SerializeField] int port = 3307;
+    public string server = "127.0.0.1";
+    public string database = "drumhero";
+    public string user = "root";
+    public string password = "";
+    public int port = 3307;
     private MySqlConnection connection;
 
     public MySQLSongDao()
     {
-        string connectionString = "Server=127.0.0.1; Port=3307; Database=drumhero; Uid=root; Pwd=;";
-        Debug.Log(connectionString);
-        connection = new MySqlConnection(connectionString);
+        try
+        {
+            string connectionString = "Server="+ server +"; Port="+ port +"; Database="+database+"; Uid="+ user +"; Pwd="+ password +";";
+            Debug.Log(connectionString);
+            connection = new MySqlConnection(connectionString);
 
-        connection.Open();
-        Debug.Log("Connected 2 MySQL");
+            connection.Open();
+            Debug.Log("Connected 2 MySQL");
+
+        }
+        catch(Exception ex) 
+        {
+            Debug.Log("Not connected 2 MySQL: " + ex);
+        }
     }
 
     public void AddSongEvent(float _time, int _data)
@@ -33,6 +45,7 @@ public class MySQLSongDao : SongStatsDao
     public void DeleteSong(string id)
     {
         throw new System.NotImplementedException();
+        //Borrar una cancion de la tabla Song
     }
 
     public List<SongEvent> GetSongEvents()
