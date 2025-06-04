@@ -6,20 +6,6 @@ using UnityEngine.UI;
 
 public class MemorySongDao : SongStatsDao
 {
-    public struct SongEvent
-    {
-        public float time;
-        public int data;
-    };
-
-    struct Song
-    {
-        public string id;
-        public string title;
-        public string author;
-        public List<SongEvent> events;
-    };
-
     Song song;
 
     Dictionary<string, Song> storedSongs;

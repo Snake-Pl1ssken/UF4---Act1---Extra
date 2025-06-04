@@ -298,7 +298,7 @@ public class LevelManager : MonoBehaviour
         }
         else if(state == State.playing)
         {           
-            List<SongManager.SongEvent> events = songManagerC.GetSongEvents();
+            List<SongEvent> events = songManagerC.GetSongEvents();
 
             playTimer += Time.deltaTime;
 

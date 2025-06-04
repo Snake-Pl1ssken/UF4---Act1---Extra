@@ -15,7 +15,6 @@ public class SongManager : MonoBehaviour
 
     public StorageType storagetype;
     SongStatsDao songstatsDao;
-    songStats songStats;
 
     string id;
 
@@ -31,19 +30,6 @@ public class SongManager : MonoBehaviour
                 break;
         }
     }
-    public struct SongEvent
-    {
-        public float time;
-        public int data;
-    };
-
-    struct Song
-    {
-        public string id;
-        public string title;
-        public string author;
-        public List<SongEvent> events;
-    };
 
     Song song;
 

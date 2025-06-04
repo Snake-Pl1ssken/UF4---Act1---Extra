@@ -1,28 +1,82 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
+using System;
 
 public class MySQLSongDao : SongStatsDao
 {
-    // Start is called before the first frame update
-    void Start()
+    // Datos de conexión
+    [SerializeField] string server = "127.0.0.1";
+    [SerializeField] string database = "racer";
+    [SerializeField] string user = "root";
+    [SerializeField] string password = "";
+    [SerializeField] int port = 3307;
+    private MySqlConnection connection;
+
+    public MySQLSongDao()
     {
-        
+        string connectionString = "Server=127.0.0.1; Port=3307; Database=drumhero; Uid=root; Pwd=;";
+        Debug.Log(connectionString);
+        connection = new MySqlConnection(connectionString);
+
+        connection.Open();
+        Debug.Log("Connected 2 MySQL");
     }
 
-    // Update is called once per frame
-    void Update()
+    public void AddSongEvent(float _time, int _data)
     {
-        
+        throw new System.NotImplementedException();
+    }
+
+    public void DeleteSong(string id)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public List<SongEvent> GetSongEvents()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public List<string> GetSongIds()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void GetSongInfo(out string _title, out string _author)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void GetSongInfo(string id, out string _title, out string _author)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void LoadSong(string id)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void NewSong()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void SaveSong()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void SetSongInfo(string _title, string _author)
+    {
+        throw new System.NotImplementedException();
     }
 }
 
-//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
-//using MySql.Data.MySqlClient;
-//using System.Data.SqlClient;
-//using System;
+
 
 //public class MySQLRaceStatsDAO : RaceStatsDAO
 //{
