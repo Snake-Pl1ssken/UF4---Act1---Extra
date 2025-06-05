@@ -1,0 +1,15 @@
+use DrumHero;
+CREATE TABLE Songs (
+    id VARCHAR(45) PRIMARY KEY,
+    title VARCHAR(255),
+    author VARCHAR(255)
+);
+
+CREATE TABLE SongEvents (
+    song_id VARCHAR(45),
+    event_index INT,
+    event_data FLOAT,
+    event_time FLOAT,
+    PRIMARY KEY (song_id, event_index),
+    FOREIGN KEY (song_id) REFERENCES Songs(id) ON DELETE CASCADE
+);
