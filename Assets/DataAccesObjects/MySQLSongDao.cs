@@ -16,8 +16,9 @@ public class MySQLSongDao : SongStatsDao
     public string database = "drumhero";
     public string user = "root";
     public string password = "";
-    public int port = 3307;
+    public int port = 3306;
     private MySqlConnection connection;
+    Song song;
 
     public MySQLSongDao()
     {
@@ -39,7 +40,13 @@ public class MySQLSongDao : SongStatsDao
 
     public void AddSongEvent(float _time, int _data)
     {
-        throw new System.NotImplementedException();
+        SongEvent eventos = new SongEvent
+        {
+            time = _time,
+            data = _data
+        };
+
+        song.events.Add(eventos);
     }
 
     public void DeleteSong(string id)
@@ -60,12 +67,30 @@ public class MySQLSongDao : SongStatsDao
 
     public void GetSongInfo(out string _title, out string _author)
     {
-        throw new System.NotImplementedException();
+        _title = song.title;
+        _author = song.author;
     }
 
     public void GetSongInfo(string id, out string _title, out string _author)
     {
-        throw new System.NotImplementedException();
+        _title = "";
+        _author = "";
+
+        string query = "SELECT title, author FROM Songs WHERE id = '" + id + "'";
+        MySqlCommand command = new MySqlCommand(query, connection);
+
+        using (MySqlDataReader reader = command.ExecuteReader())
+        {
+            if (reader.Read())
+            {
+                _title = reader.GetString("title");
+                _author = reader.GetString("author");
+            }
+            else
+            {
+                Debug.Log("No esta cancion con id: " + id);
+            }
+        }
     }
 
     public void LoadSong(string id)
@@ -75,17 +100,49 @@ public class MySQLSongDao : SongStatsDao
 
     public void NewSong()
     {
-        throw new System.NotImplementedException();
+        song = new Song();
+        song.id = Guid.NewGuid().ToString();
+        song.title = "";
+        song.author = "";
+        song.events = new List<SongEvent>();
     }
 
     public void SaveSong()
     {
-        throw new System.NotImplementedException();
+        try
+        {
+            string songId = song.id;
+            string insertSongQuery =
+                "INSERT INTO Songs (id, title, author) VALUES ('"
+                + song.id + "', '"
+                + song.title + "', '"
+                + song.author + "')";
+
+            MySqlCommand command = new MySqlCommand(insertSongQuery, connection);
+            command.ExecuteNonQuery();
+
+            for (int i = 0; i < song.events.Count; i++)
+            {
+                SongEvent e = song.events[i];
+                string insertEventQuery =
+                    $"INSERT INTO SongEvents (song_id, event_index, event_data, event_time) VALUES ('{song.id}', {i}, {e.data.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {e.time.ToString(System.Globalization.CultureInfo.InvariantCulture)})";
+
+
+                command = new MySqlCommand(insertEventQuery, connection);
+                command.ExecuteNonQuery();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.Log("Error por esto: " + ex);
+        }
+
     }
 
     public void SetSongInfo(string _title, string _author)
     {
-        throw new System.NotImplementedException();
+        song.title = _title;
+        song.author = _author;
     }
 }
 
