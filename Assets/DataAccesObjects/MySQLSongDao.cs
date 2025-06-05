@@ -61,7 +61,7 @@ public class MySQLSongDao : SongStatsDao
     {
         List<SongEvent> events = new List<SongEvent>();
 
-        string query = "SELECT data, time FROM SongEvents"; 
+        string query = "SELECT event_data, event_time FROM SongEvents"; 
         MySqlCommand command = new MySqlCommand(query, connection);
 
         MySqlDataReader reader = command.ExecuteReader();
@@ -70,14 +70,15 @@ public class MySQLSongDao : SongStatsDao
         {
             SongEvent songEvent = new SongEvent
             {
-                data = reader.GetFloat("data"),
-                time = reader.GetFloat("time")
+                data = reader.GetFloat("event_data"),
+                time = reader.GetFloat("event_time")
             };
 
             events.Add(songEvent);
         }
-
-        return events;
+        reader.Close();
+        //Es de la cancion ya cargada
+        return song.events;
     }
 
     public List<string> GetSongIds()
@@ -93,7 +94,8 @@ public class MySQLSongDao : SongStatsDao
             string id = reader.GetString("id");
             ids.Add(id);
         }
-        
+        reader.Close();
+
         return ids;
     }
 
@@ -120,12 +122,48 @@ public class MySQLSongDao : SongStatsDao
         else
         {
             Debug.Log("No esta cancion con id: " + id);
-        }        
+        }      
+        reader.Close();
     }
 
     public void LoadSong(string id)
     {
-        throw new System.NotImplementedException();
+        //Debug.Log();
+        song = new Song(); 
+        song.id = id;
+        song.events = new List<SongEvent>();
+
+        string songQuery = "SELECT title, author FROM Songs WHERE id = '" + id + "'";
+        MySqlCommand songCommand = new MySqlCommand(songQuery, connection);
+        MySqlDataReader reader = songCommand.ExecuteReader();
+
+        if (reader.Read())
+        {
+            song.title = reader.GetString("title");
+            song.author = reader.GetString("author");
+        }
+        else
+        {
+            Debug.LogError("Canción no encontrada con ID: " + id);
+            return;
+        }
+        reader.Close();
+
+        string eventsQuery = "SELECT event_time, event_data FROM SongEvents WHERE song_id = '" + id + "' ORDER BY event_index";
+        MySqlCommand eventsCommand = new MySqlCommand(eventsQuery, connection);
+        MySqlDataReader reader2 = eventsCommand.ExecuteReader();
+        
+        while (reader2.Read())
+        {
+            float time = reader2.GetFloat("event_time");
+            float data = reader2.GetFloat("event_data");
+            //float dataFloat = reader2.GetFloat("event_data");
+            //int data = (int)dataFloat;
+
+            Debug.Log("Evento : time=" + time + "," + "data=" + data);
+            song.events.Add(new SongEvent { time = time, data = data });
+        }        
+        reader2.Close();
     }
 
     public void NewSong()
@@ -142,11 +180,7 @@ public class MySQLSongDao : SongStatsDao
         try
         {
             string songId = song.id;
-            string insertSongQuery =
-                "INSERT INTO Songs (id, title, author) VALUES ('"
-                + song.id + "', '"
-                + song.title + "', '"
-                + song.author + "')";
+            string insertSongQuery = "INSERT INTO Songs (id, title, author) VALUES ('" + song.id + "', '" + song.title + "', '" + song.author + "')";
 
             MySqlCommand command = new MySqlCommand(insertSongQuery, connection);
             command.ExecuteNonQuery();
@@ -154,8 +188,7 @@ public class MySQLSongDao : SongStatsDao
             for (int i = 0; i < song.events.Count; i++)
             {
                 SongEvent e = song.events[i];
-                string insertEventQuery =
-                    $"INSERT INTO SongEvents (song_id, event_index, event_data, event_time) VALUES ('{song.id}', {i}, {e.data.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {e.time.ToString(System.Globalization.CultureInfo.InvariantCulture)})";
+                string insertEventQuery = $"INSERT INTO SongEvents (song_id, event_index, event_data, event_time) VALUES ('{song.id}', {i}, {e.data.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {e.time.ToString(System.Globalization.CultureInfo.InvariantCulture)})";
 
 
                 command = new MySqlCommand(insertEventQuery, connection);

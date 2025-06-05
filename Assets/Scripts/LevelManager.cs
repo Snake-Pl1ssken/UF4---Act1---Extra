@@ -274,6 +274,7 @@ public class LevelManager : MonoBehaviour
             if(playPlayPressed)
             {
                 string id = songIds[playDropdownSongC.value];
+                Debug.Log(id);
                 songManagerC.LoadSong(id);
                 playTimer = 0;
                 playLastEventIndex = -1;
